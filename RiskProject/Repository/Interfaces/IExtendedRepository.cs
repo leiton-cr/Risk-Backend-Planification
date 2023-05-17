@@ -1,11 +1,11 @@
 ﻿namespace RiskProject.Repository.Interfaces
 {
-    public interface IExtendedRepository<T> where T : class, IBaseRepository<T>
+    public interface IExtendedRepository<T> : IRepository
     {
-      
-        T GetById(int EmployeeID);
-        void Insert(T employee);
-        void Update(T employee);
-        void Delete(int EmployeeID);
+        IEnumerable<T> GetAll();
+        T GetById(Guid RegisterID);
+        void Insert(T register);
+        void Update(T register);
+        void Delete(Guid Register);
     }
 }

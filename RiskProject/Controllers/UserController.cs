@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using RiskBackend.Dto;
-using RiskBackend.Services;
+using RiskProject.Services;
 
 namespace RiskBackend.Controllers
 {
@@ -12,7 +12,7 @@ namespace RiskBackend.Controllers
     {
         private readonly UserService _service;
 
-        public UserController(ILogger<AuthController> logger)
+        public UserController()
         {
             _service = new UserService();
         }

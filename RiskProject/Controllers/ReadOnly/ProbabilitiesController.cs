@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using RiskBackend.Repository;
+using RiskProject.Repository.ReadOnly;
 
 namespace RiskProject.Controllers.ReadOnly
 {

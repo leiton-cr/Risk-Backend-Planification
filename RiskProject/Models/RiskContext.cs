@@ -15,6 +15,8 @@ public partial class RiskContext : DbContext
     {
     }
 
+    public virtual DbSet<TblDetail> TblDetails { get; set; }
+
     public virtual DbSet<TblImpact> TblImpacts { get; set; }
 
     public virtual DbSet<TblPriority> TblPriorities { get; set; }
@@ -28,11 +30,63 @@ public partial class RiskContext : DbContext
     public virtual DbSet<TblUser> TblUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=localhost;Database=Risk;Persist Security Info=True; User ID=sa;Password=admin123!;Trust Server Certificate=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<TblDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__tbl_deta__3213E83F0B531D74");
+
+            entity.ToTable("tbl_details");
+
+            entity.Property(e => e.Id)
+                .HasMaxLength(36)
+                .IsUnicode(false)
+                .HasColumnName("id");
+            entity.Property(e => e.ImpactDescription)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("impact_description");
+            entity.Property(e => e.ImpactId)
+                .HasMaxLength(36)
+                .IsUnicode(false)
+                .HasColumnName("impact_id");
+            entity.Property(e => e.Owner)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("owner");
+            entity.Property(e => e.Points).HasColumnName("points");
+            entity.Property(e => e.PriorityId)
+                .HasMaxLength(36)
+                .IsUnicode(false)
+                .HasColumnName("priority_id");
+            entity.Property(e => e.ProbabilityId)
+                .HasMaxLength(36)
+                .IsUnicode(false)
+                .HasColumnName("probability_id");
+            entity.Property(e => e.ResponsePlan)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("response_plan");
+            entity.Property(e => e.RiskDescription)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("risk_description");
+
+            entity.HasOne(d => d.Impact).WithMany(p => p.TblDetails)
+                .HasForeignKey(d => d.ImpactId)
+                .HasConstraintName("FK_details_impacts");
+
+            entity.HasOne(d => d.Priority).WithMany(p => p.TblDetails)
+                .HasForeignKey(d => d.PriorityId)
+                .HasConstraintName("FK_details_priorties");
+
+            entity.HasOne(d => d.Probability).WithMany(p => p.TblDetails)
+                .HasForeignKey(d => d.ProbabilityId)
+                .HasConstraintName("FK_details_probabilities");
+        });
+
         modelBuilder.Entity<TblImpact>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__tbl_impa__3213E83F198E97AD");
@@ -122,50 +176,21 @@ public partial class RiskContext : DbContext
 
         modelBuilder.Entity<TblRegister>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("tbl_registers");
+            entity.HasKey(e => e.Id).HasName("PK__tbl_regi__3213E83F17FAEDB8");
 
-            entity.Property(e => e.Active)
-                .HasDefaultValueSql("((1))")
-                .HasColumnName("active");
+            entity.ToTable("tbl_registers");
+
             entity.Property(e => e.Id)
                 .HasMaxLength(36)
                 .IsUnicode(false)
                 .HasColumnName("id");
-            entity.Property(e => e.ImpactDescription)
-                .HasMaxLength(150)
-                .IsUnicode(false)
-                .HasColumnName("impact_description");
-            entity.Property(e => e.ImpactId)
-                .HasMaxLength(36)
-                .IsUnicode(false)
-                .HasColumnName("impact_id");
-            entity.Property(e => e.Owner)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("owner");
-            entity.Property(e => e.Points).HasColumnName("points");
-            entity.Property(e => e.PriorityId)
-                .HasMaxLength(36)
-                .IsUnicode(false)
-                .HasColumnName("priority_id");
-            entity.Property(e => e.ProbabilityId)
-                .HasMaxLength(36)
-                .IsUnicode(false)
-                .HasColumnName("probability_id");
+            entity.Property(e => e.Active)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("active");
             entity.Property(e => e.ProjectId)
                 .HasMaxLength(36)
                 .IsUnicode(false)
                 .HasColumnName("project_id");
-            entity.Property(e => e.ResponsePlan)
-                .HasMaxLength(150)
-                .IsUnicode(false)
-                .HasColumnName("response_plan");
-            entity.Property(e => e.RiskDescription)
-                .HasMaxLength(150)
-                .IsUnicode(false)
-                .HasColumnName("risk_description");
             entity.Property(e => e.TaskDescription)
                 .HasMaxLength(150)
                 .IsUnicode(false)
@@ -178,21 +203,34 @@ public partial class RiskContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("updated_at");
 
-            entity.HasOne(d => d.Impact).WithMany()
-                .HasForeignKey(d => d.ImpactId)
-                .HasConstraintName("FK_registers_impacts");
-
-            entity.HasOne(d => d.Priority).WithMany()
-                .HasForeignKey(d => d.PriorityId)
-                .HasConstraintName("FK_registers_priorties");
-
-            entity.HasOne(d => d.Probability).WithMany()
-                .HasForeignKey(d => d.ProbabilityId)
-                .HasConstraintName("FK_registers_probabilities");
-
-            entity.HasOne(d => d.Project).WithMany()
+            entity.HasOne(d => d.Project).WithMany(p => p.TblRegisters)
                 .HasForeignKey(d => d.ProjectId)
                 .HasConstraintName("FK_registers_projects");
+
+            entity.HasMany(d => d.IdDetails).WithMany(p => p.IdRegisters)
+                .UsingEntity<Dictionary<string, object>>(
+                    "TblRegisteredDetail",
+                    r => r.HasOne<TblDetail>().WithMany()
+                        .HasForeignKey("IdDetail")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_registered_details_register"),
+                    l => l.HasOne<TblRegister>().WithMany()
+                        .HasForeignKey("IdRegister")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_registered_details_detail"),
+                    j =>
+                    {
+                        j.HasKey("IdRegister", "IdDetail").HasName("PK__tbl_regi__D6BD8A14EC9A16D7");
+                        j.ToTable("tbl_registered_details");
+                        j.IndexerProperty<string>("IdRegister")
+                            .HasMaxLength(36)
+                            .IsUnicode(false)
+                            .HasColumnName("id_register");
+                        j.IndexerProperty<string>("IdDetail")
+                            .HasMaxLength(36)
+                            .IsUnicode(false)
+                            .HasColumnName("id_detail");
+                    });
         });
 
         modelBuilder.Entity<TblUser>(entity =>
@@ -228,6 +266,7 @@ public partial class RiskContext : DbContext
 
         OnModelCreatingPartial(modelBuilder);
     }
+
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

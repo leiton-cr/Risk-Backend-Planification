@@ -1,67 +1,113 @@
-﻿
-CREATE TABLE tbl_users(
-	id VARCHAR(36) PRIMARY KEY,
-	email VARCHAR(50) UNIQUE NOT NULL,
-	pepper VARCHAR(48) NOT NULL,
-	salt INT NOT NULL,
-	pass VARCHAR(50) DEFAULT 1 NOT NULL,
-	active BIT DEFAULT 1
+﻿-- Risk.dbo.tbl_impacts definition
+
+-- Drop table
+
+-- DROP TABLE Risk.dbo.tbl_impacts;
+
+CREATE TABLE Risk.dbo.tbl_impacts (
+	id varchar(36) PRIMARY KEY,
+	name varchar(15) UNIQUE,
+	value int UNIQUE,
+	active bit DEFAULT 1
 );
 
 
-CREATE TABLE tbl_tasks(
-	id VARCHAR(36) PRIMARY KEY,
-	name VARCHAR(50) UNIQUE NOT NULL,
-	active BIT DEFAULT 1
+-- Risk.dbo.tbl_priorities definition
+
+-- Drop table
+
+-- DROP TABLE Risk.dbo.tbl_priorities;
+
+CREATE TABLE Risk.dbo.tbl_priorities (
+	id varchar(36) PRIMARY KEY,
+	name varchar(15) UNIQUE,
+	value int UNIQUE,
+	active bit DEFAULT 1
 );
 
 
-CREATE TABLE tbl_projects(
-	id VARCHAR(36) PRIMARY KEY,
-	name VARCHAR(50) UNIQUE NOT NULL,
-	active BIT DEFAULT 1
+-- Risk.dbo.tbl_probabilities definition
+
+-- Drop table
+
+-- DROP TABLE Risk.dbo.tbl_probabilities;
+
+CREATE TABLE Risk.dbo.tbl_probabilities (
+	id varchar(36) PRIMARY KEY,
+	name varchar(15) UNIQUE,
+	value int UNIQUE,
+	active bit DEFAULT 1
 );
 
-CREATE TABLE tbl_probabilities(
-	id VARCHAR(36) PRIMARY KEY,
-	name VARCHAR(15) UNIQUE NOT NULL,
-	active BIT DEFAULT 1
+
+-- Risk.dbo.tbl_projects definition
+
+-- Drop table
+
+-- DROP TABLE Risk.dbo.tbl_projects;
+
+CREATE TABLE Risk.dbo.tbl_projects (
+	id varchar(36) PRIMARY KEY,
+	name varchar(50) UNIQUE,
+	active bit DEFAULT 1
 );
 
-CREATE TABLE tbl_impacts(
-	id VARCHAR(36) PRIMARY KEY,
-	name VARCHAR(15) UNIQUE NOT NULL,
-	active BIT DEFAULT 1
+
+-- Risk.dbo.tbl_users definition
+
+-- Drop table
+
+-- DROP TABLE Risk.dbo.tbl_users;
+
+CREATE TABLE Risk.dbo.tbl_users (
+	id varchar(36) PRIMARY KEY,
+	email varchar(50) UNIQUE,
+	pepper varchar(48),
+	salt int NOT NULL,
+	pass varchar(50),
+	active bit DEFAULT 1
 );
 
-CREATE TABLE tbl_priorities(
-	id VARCHAR(36) PRIMARY KEY,
-	name VARCHAR(15) UNIQUE NOT NULL,
-	active BIT DEFAULT 1
+
+-- Risk.dbo.tbl_registers definition
+
+-- Drop table
+
+-- DROP TABLE Risk.dbo.tbl_registers;
+
+CREATE TABLE Risk.dbo.tbl_registers (
+	id varchar(36) PRIMARY KEY,
+	project_id varchar(36),
+	task_id varchar(36) UNIQUE,
+	task_description varchar(150),
+	active bit DEFAULT 1,
+	updated_at date,
+	CONSTRAINT FK_registers_projects FOREIGN KEY (project_id) REFERENCES Risk.dbo.tbl_projects(id)
 );
 
-CREATE TABLE tbl_registers(
-	id VARCHAR(36),
-	project_id VARCHAR(36),
-	task_id VARCHAR(36),
-	probability_id VARCHAR(36),
-	impact_id VARCHAR(36),
-	priority_id VARCHAR(36),
-	active BIT DEFAULT 1,
-	created_at DATE DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATE,
-	created_by  VARCHAR(36),
-	updated_by  VARCHAR(36),
-	
-	CONSTRAINT FK_registers_projects FOREIGN KEY (project_id) REFERENCES tbl_projects(id),
-    CONSTRAINT FK_registers_tasks FOREIGN KEY (task_id) REFERENCES tbl_tasks(id),
-    CONSTRAINT FK_registers_probabilities FOREIGN KEY (probability_id) REFERENCES tbl_probabilities(id),
-    CONSTRAINT FK_registers_impacts FOREIGN KEY (impact_id) REFERENCES tbl_impacts(id),
-    CONSTRAINT FK_registers_priorties FOREIGN KEY (priority_id) REFERENCES tbl_priorities(id),
-    CONSTRAINT FK_registers_created_by FOREIGN KEY (created_by) REFERENCES tbl_users(id),
-    CONSTRAINT FK_registers_updated_by FOREIGN KEY (updated_by) REFERENCES tbl_users(id)
+
+CREATE TABLE Risk.dbo.tbl_details(
+	id varchar(36) PRIMARY KEY,
+	risk_description varchar(150),
+	impact_description varchar(150),
+	probability_id varchar(36),
+	impact_id varchar(36),
+	owner varchar(50),
+	response_plan varchar(150),
+	priority_id varchar(36),
+	points int,
+	CONSTRAINT FK_details_impacts FOREIGN KEY (impact_id) REFERENCES Risk.dbo.tbl_impacts(id),
+	CONSTRAINT FK_details_priorties FOREIGN KEY (priority_id) REFERENCES Risk.dbo.tbl_priorities(id),
+	CONSTRAINT FK_details_probabilities FOREIGN KEY (probability_id) REFERENCES Risk.dbo.tbl_probabilities(id)
 );
-	
+
+CREATE TABLE Risk.dbo.tbl_registered_details(
+	id_register varchar(36),
+	id_detail varchar(36),
+	PRIMARY KEY(id_register,id_detail),
+	CONSTRAINT FK_registered_details_detail FOREIGN KEY (id_register) REFERENCES Risk.dbo.tbl_registers(id),
+	CONSTRAINT FK_registered_details_register FOREIGN KEY (id_detail) REFERENCES Risk.dbo.tbl_details(id)
+);
 
 
 INSERT INTO tbl_projects (id, name, active) VALUES 
@@ -101,6 +147,9 @@ INSERT INTO tbl_priorities (id, name, active) VALUES
 ('2b2c56e7-48c6-455d-9c60-8b1b786d3e44', 'Medium', 1),
 ('79c484be-b38b-4e4f-ba0e-857ee5f99ad4', 'High', 1),
 ('5eb5ed2d-1c2a-4e2d-89cf-0d5f3c09140a', 'Highest', 1);
+
+
+
 
 
 

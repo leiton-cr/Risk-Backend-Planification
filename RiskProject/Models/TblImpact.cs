@@ -12,4 +12,6 @@ public partial class TblImpact
     public int? Value { get; set; }
 
     public bool? Active { get; set; }
+
+    public virtual ICollection<TblDetail> TblDetails { get; set; } = new List<TblDetail>();
 }

@@ -1,6 +1,6 @@
 ﻿namespace RiskProject.Repository.Interfaces
 {
-    public interface IBaseRepository<T> where T : class
+    public interface IBaseRepository<T> : IRepository
     {
         IEnumerable<T> GetAll();
     }

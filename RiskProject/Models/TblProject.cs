@@ -10,4 +10,6 @@ public partial class TblProject
     public string Name { get; set; } = null!;
 
     public bool? Active { get; set; }
+
+    public virtual ICollection<TblRegister> TblRegisters { get; set; } = new List<TblRegister>();
 }

@@ -3,7 +3,7 @@ using RiskBackend.Dto;
 
 namespace RiskProject.Repository.Interfaces
 {
-    public interface IAuthRepository
+    public interface IAuthRepository : IRepository
     {
         Boolean Exists(String email);
         public TblUser GetByEmail(String email);

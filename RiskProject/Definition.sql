@@ -88,6 +88,7 @@ CREATE TABLE Risk.dbo.tbl_registers (
 
 CREATE TABLE Risk.dbo.tbl_details(
 	id varchar(36) PRIMARY KEY,
+	id_register varchar(36),
 	risk_description varchar(150),
 	impact_description varchar(150),
 	probability_id varchar(36),
@@ -97,18 +98,10 @@ CREATE TABLE Risk.dbo.tbl_details(
 	priority_id varchar(36),
 	points int,
 	CONSTRAINT FK_details_impacts FOREIGN KEY (impact_id) REFERENCES Risk.dbo.tbl_impacts(id),
+	CONSTRAINT FK_details_registers FOREIGN KEY (id_register) REFERENCES Risk.dbo.tbl_registers(id),
 	CONSTRAINT FK_details_priorties FOREIGN KEY (priority_id) REFERENCES Risk.dbo.tbl_priorities(id),
 	CONSTRAINT FK_details_probabilities FOREIGN KEY (probability_id) REFERENCES Risk.dbo.tbl_probabilities(id)
 );
-
-CREATE TABLE Risk.dbo.tbl_registered_details(
-	id_register varchar(36),
-	id_detail varchar(36),
-	PRIMARY KEY(id_register,id_detail),
-	CONSTRAINT FK_registered_details_detail FOREIGN KEY (id_register) REFERENCES Risk.dbo.tbl_registers(id),
-	CONSTRAINT FK_registered_details_register FOREIGN KEY (id_detail) REFERENCES Risk.dbo.tbl_details(id)
-);
-
 
 INSERT INTO tbl_projects (id, name, active) VALUES 
 ('b372f8de-9aae-4c81-93e8-0d0a1a656ef4', 'Phoenix', 1),
@@ -127,30 +120,48 @@ INSERT INTO tbl_projects (id, name, active) VALUES
 ('e68c3cb9-9da2-43b5-9b1d-57a81f078d68', 'Horizon', 1),
 ('f5dcfb50-720a-41d5-836c-c170548a7d71', 'Prometheus II', 1);
 
-INSERT INTO tbl_probabilities (id, name, active) VALUES 
-('d53f6da9-6c12-40d7-aa5b-79df1c408a2b', 'Rare', 1),
+INSERT INTO tbl_probabilities (id, name, value) VALUES 
+('d53f6da9-6c12-40d7-aa5b-79df1c408a2b', 'Rare', 0),
 ('2b9c5c5d-1b64-4625-80c5-497f82182aa7', 'Unlikely', 1),
-('9c820f8d-0e05-4a4f-a4ad-b81ad1a4d3b3', 'Moderate', 1),
-('a57c183d-91b7-4d96-8e84-67c36944ce38', 'Likely', 1),
-('98b09a89-24f3-44d5-9106-9fc6f2e78c33', 'Almost certain', 1);
+('9c820f8d-0e05-4a4f-a4ad-b81ad1a4d3b3', 'Moderate', 2),
+('a57c183d-91b7-4d96-8e84-67c36944ce38', 'Likely', 3),
+('98b09a89-24f3-44d5-9106-9fc6f2e78c33', 'Almost certain', 4);
 
-INSERT INTO tbl_impacts (id, name) VALUES 
-('e6c8f6e8-6a34-4d1b-8c7e-f2d9b9a6a142', 'insignificant'), 
-('d7bda924-0e8e-4edc-9ef4-95dab3c0a3a3', 'minor'),
-('3bf9a1d2-f2df-47e1-a563-2c29d80be511', 'significant'),
-('5c1599b9-6fc9-4c6f-becf-18a6b09d6b8a', 'major'),
-('f69304cf-4552-42f1-a20a-ba122e21bb60', 'severe');
+INSERT INTO tbl_impacts (id, name, value) VALUES 
+('e6c8f6e8-6a34-4d1b-8c7e-f2d9b9a6a142', 'insignificant', 0), 
+('d7bda924-0e8e-4edc-9ef4-95dab3c0a3a3', 'minor', 1),
+('3bf9a1d2-f2df-47e1-a563-2c29d80be511', 'significant', 2),
+('5c1599b9-6fc9-4c6f-becf-18a6b09d6b8a', 'major', 3),
+('f69304cf-4552-42f1-a20a-ba122e21bb60', 'severe', 4);
 
-INSERT INTO tbl_priorities (id, name, active) VALUES 
-('292a2f92-8137-4b17-8c7b-fd6b8577f60c', 'Lowest', 1),
-('e8947edc-6f28-4f87-b6ec-23f22a3e9b3e', 'Low', 1),
-('2b2c56e7-48c6-455d-9c60-8b1b786d3e44', 'Medium', 1),
-('79c484be-b38b-4e4f-ba0e-857ee5f99ad4', 'High', 1),
-('5eb5ed2d-1c2a-4e2d-89cf-0d5f3c09140a', 'Highest', 1);
-
-
+INSERT INTO tbl_priorities (id, name, active, value) VALUES 
+('292a2f92-8137-4b17-8c7b-fd6b8577f60c', 'Lowest', 1, 0),
+('e8947edc-6f28-4f87-b6ec-23f22a3e9b3e', 'Low', 1, 1),
+('2b2c56e7-48c6-455d-9c60-8b1b786d3e44', 'Medium', 1, 2),
+('79c484be-b38b-4e4f-ba0e-857ee5f99ad4', 'High', 1, 3),
+('5eb5ed2d-1c2a-4e2d-89cf-0d5f3c09140a', 'Highest',1 , 4);
 
 
+/*
+	[
+	  {
+	    "email": "Fernando_Iglesias@gmail.com",
+	    "pass": "Admin_123"
+	  },
+	  {
+	    "email": "Luis.leiton.cr@gmail.com",
+	    "pass": "Admin_123"
+	  }
+	]
+ */
+
+
+INSERT INTO Risk.dbo.tbl_users (id,email,pepper,salt,pass,active) VALUES
+	 (N'0a5bd216-5209-4412-b154-0250bb665557',N'Fernando_Iglesias@gmail.com',N'R0gzbEdlODNWeVVpYTB6cTQxTVg5YlowVVJJPQ==',7600193,N'000blPaDTN4MGA6ehBDr+j4TUPmNnsxWA1wDy4mdxlA=',1),
+	 (N'8d940b92-4d0c-4d96-8c32-c36a228421f8',N'Luis.leiton.cr@gmail.com',N'Ti9nSjhFZklBdC95aUFtKzNVS001RHNRVkpZPQ==',662848,N'000EwjVXwee431RkqqBQ9qzt6EtBhZGffkY3hr4/IwU=',1);
+
+	
+	
 
 
 

@@ -2,5 +2,8 @@
 
 namespace RiskBackend.Repository
 {
-    public interface IRegisterRepository : IExtendedRepository<TblRegister> { }
+    public interface IRegisterRepository : IExtendedRepository<TblRegister>
+    {
+        void RemoveRelated(string id);
+    }
 }

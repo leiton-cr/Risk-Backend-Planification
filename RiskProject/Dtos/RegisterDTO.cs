@@ -4,12 +4,11 @@ namespace RiskProject.Dtos
 {
     public class RegisterDTO
     {
-        public Guid Id { get; set; }
-        public Guid ProjectId { get; set; }
-        public Guid TaskId { get; set; }
+        public string Id { get; set; } = null!;
+        public string ProjectId { get; set; } = null!;
+        public string TaskId { get; set; } = null!;
         public string TaskDescription { get; set; } = string.Empty;
         [Required]
         public virtual ICollection<DetailDTO> Details { get; set; } = new List<DetailDTO>();
-        public DateTime UpdatedAt { get; set; }
     }
 }

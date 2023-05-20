@@ -2,14 +2,14 @@
 {
     public class DetailDTO
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; } = null!;
         public string RiskDescription { get; set; } = string.Empty;
         public string ImpactDescription { get; set; } = string.Empty;
-        public Guid ProbabilityId { get; set; }
-        public Guid ImpactId { get; set; }
+        public string ProbabilityId { get; set; } = null!;
+        public string ImpactId { get; set; } = null!;
         public string Owner { get; set; } = string.Empty;
         public string ResponsePlan { get; set; } = string.Empty;
-        public Guid PriorityId { get; set; }
+        public string PriorityId { get; set; } = null!;
         public int Points { get; set; }
     }
 }

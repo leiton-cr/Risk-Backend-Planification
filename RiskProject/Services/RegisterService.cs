@@ -23,7 +23,7 @@ namespace RiskProject.Services
                 TaskDescription = register.TaskDescription,
                 UpdatedAt = null,
                 Active = true,
-                IdDetails = register.Details.Select(x => {
+                TblDetails = register.Details.Select(x => {
                             return new TblDetail
                             {
                                 Id = Guid.NewGuid().ToString(),
@@ -60,14 +60,16 @@ namespace RiskProject.Services
 
         public TblRegister Update(Guid id, RegisterDTO register)
         {
-            TblRegister updatedRegister = _repo.GetById(id);
+            _repo.RemoveRelated(register.Id);
 
+            TblRegister updatedRegister = _repo.GetById(id);
             updatedRegister.Id = id.ToString();
             updatedRegister.ProjectId = register.ProjectId.ToString();
             updatedRegister.TaskId = register.TaskId.ToString();
             updatedRegister.TaskDescription = register.TaskDescription;
             updatedRegister.UpdatedAt = new DateTime();
-            updatedRegister.IdDetails = register.Details.Select(x => {
+
+            updatedRegister.TblDetails = register.Details.Select(x => {
                     return new TblDetail
                     {
                         Id = Guid.NewGuid().ToString(),
@@ -83,6 +85,8 @@ namespace RiskProject.Services
                 }).ToList();
 
             _repo.Update(updatedRegister);
+
+            
 
             return updatedRegister;
         }

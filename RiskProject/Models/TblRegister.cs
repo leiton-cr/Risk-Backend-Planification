@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+
 namespace RiskProject.Models;
 
 public partial class TblRegister
@@ -17,5 +19,5 @@ public partial class TblRegister
 
     public virtual TblProject? Project { get; set; }
 
-    public virtual ICollection<TblDetail> IdDetails { get; set; } = new List<TblDetail>();
+    public virtual ICollection<TblDetail> TblDetails { get; set; } = new List<TblDetail>();
 }

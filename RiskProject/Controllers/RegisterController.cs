@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
+
 using RiskProject.Dtos;
 using RiskProject.Services;
 
@@ -24,13 +25,13 @@ namespace RiskBackend.Controllers
         }
 
         [HttpGet("{id}", Name = "Get One Register")]
-        public IActionResult Get(Guid id)
+        public IActionResult Get(string id)
         {
             TblRegister register;
 
             try
             {
-                register = _service.GetById(id);
+                register = _service.GetById(Guid.Parse(id));
             }
             catch (Exception ex)
             {
@@ -78,7 +79,14 @@ namespace RiskBackend.Controllers
         [HttpDelete(Name = "Delete Register")]
         public IActionResult Delete(Guid id)
         {
-            _service.Delete(id);
+            try
+            {
+                _service.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { status = "error", message = ex.Message });
+            }
 
             return Ok();
         }

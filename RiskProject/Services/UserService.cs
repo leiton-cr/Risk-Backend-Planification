@@ -70,5 +70,11 @@ namespace RiskProject.Services
             return _repo.Create(user, salt, pepper);
         }
 
+        public TblUser GetUserByEmail (string email){
+
+            return _repo.GetByEmail(email);
+
+        }
+
     }
 }

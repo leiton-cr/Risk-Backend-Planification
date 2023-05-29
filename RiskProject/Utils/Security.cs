@@ -1,14 +1,20 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System.Net.Mail;
+using System.Net;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace RiskBackend.Utils
 {
     public class Security
     {
         public static void HashPassword(
-            string password, 
-            out string hashPassword, 
-            out int salt, 
+            string password,
+            out string hashPassword,
+            out int salt,
             out string pepper
             )
         {
@@ -29,7 +35,7 @@ namespace RiskBackend.Utils
                     hashedBytes = sha256.ComputeHash(saltedPepperedPasswordBytes);
                     hashPassword = Convert.ToBase64String(hashedBytes);
                 }
-               
+
                 pepper = Convert.ToBase64String(pepperBytes);
             }
         }
@@ -74,6 +80,57 @@ namespace RiskBackend.Utils
                 rng.GetBytes(randomBytes);
                 return Encoding.UTF8.GetBytes(Convert.ToBase64String(randomBytes));
             }
+        }
+
+        public static void SendEmail(string to, string subject, string body)
+        {
+            try
+            {
+                // Configuración del cliente SMTP
+                SmtpClient smtpClient = new SmtpClient("smtp-mail.outlook.com", 587);
+
+
+                smtpClient.EnableSsl = true;
+                smtpClient.UseDefaultCredentials = true;
+                smtpClient.Credentials = new NetworkCredential("steverova0594@outlook.com", "Um/W^22hEb*%)6M&8%h75");
+
+                // Creación del mensaje de correo electrónico
+                MailMessage mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress("steverova0594@outlook.com");
+                mailMessage.To.Add(to);
+                mailMessage.Subject = subject;
+                mailMessage.Body = body;
+
+                // Envío del correo electrónico
+                smtpClient.Send(mailMessage);
+
+                Console.WriteLine("Correo electrónico enviado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al enviar el correo electrónico: " + ex);
+            }
+        }
+
+        public static string GenerateJWT(string email)
+        {
+            var claims = new List<Claim>
+    {
+
+        new Claim("email", email)
+        // Add more claims as needed
+    };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("JWT_SECRET_KEY_auth"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(7),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
     }

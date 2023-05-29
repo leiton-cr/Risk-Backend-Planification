@@ -30,7 +30,7 @@ public partial class RiskContext : DbContext
     public virtual DbSet<TblUser> TblUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=localhost;Database=Risk;Persist Security Info=True; User ID=sa;Password=admin123!;Trust Server Certificate=true;");
+        => optionsBuilder.UseSqlServer("Data Source=localhost;Database=Risk;Persist Security Info=True; User ID=steven;Password=1234;Trust Server Certificate=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

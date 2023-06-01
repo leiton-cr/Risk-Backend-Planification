@@ -25,7 +25,15 @@ namespace RiskBackend.Controllers
         {
             try
             {
-                return Ok(new { validation = _service.Validate(user) });
+                bool isValidate = _service.Validate(user);
+                if (isValidate)
+                {
+                    string jwt = Security.GenerateJWT(user.Email);
+                    return Ok(new { validation = isValidate, jwt });
+                }
+
+                return Ok(new { validation = isValidate });
+
             }
             catch (Exception ex)
             {
@@ -35,19 +43,6 @@ namespace RiskBackend.Controllers
         }
 
         [HttpGet("EmailExists/{email}")]
-        // public IActionResult CheckEmailExists([FromRoute] string email)
-        // {
-        //     try
-        //     {
-        //         bool emailExists = _service.Exist(email);
-        //         return Ok(new { exists = emailExists});
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return BadRequest(new { status = "error", message = ex.Message });
-        //     }
-        // }
-
         public IActionResult CheckEmailExists([FromRoute] string email)
         {
             try
@@ -59,7 +54,7 @@ namespace RiskBackend.Controllers
                     // Logic to return user with JWT if email exists
                     TblUser existingUser = _service.GetUserByEmail(email);
                     string jwt = Security.GenerateJWT(email);
-                    return Ok(new { exists = true, jwt });
+                    return Ok(new { validation = true, jwt });
                 }
                 else
                 {
@@ -70,7 +65,7 @@ namespace RiskBackend.Controllers
                     // Logic to create a new user and return JWT
                     TblUser newUser = _service.Create(user);
                     string jwt = Security.GenerateJWT(email);
-                    return Ok(new { exists = false, jwt });
+                    return Ok(new { validation = true, jwt });
                 }
             }
             catch (Exception ex)
